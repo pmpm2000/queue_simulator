@@ -1,5 +1,6 @@
 from queue import Queue
 import numpy as np
+import os
 
 
 class Simulator:
@@ -32,7 +33,6 @@ class Simulator:
         self.packets_served = 0
         self.simulation_percent = 0
 
-
     def __str__(self):
         return f'''
         Clock: {self.clock}
@@ -54,12 +54,12 @@ class Simulator:
 
     def __generate_event(self, actual_time, type):
         if type == 0:
-            time_between_clients = round(np.random.exponential(scale=1.0), 2)
+            time_between_clients = round(np.random.exponential(scale=3.0), 2)
             self.total_lambda += time_between_clients
             self.number_of_lambda += 1
             return actual_time + time_between_clients  # scale = lamdba (intensywnosc naplywu)
         elif type == 1:
-            serving_time = round(np.random.exponential(scale=0.1), 2) # scale = 1/mi
+            serving_time = round(np.random.exponential(scale=1.9), 2) # scale = 1/mi
             self.total_mi += serving_time
             self.number_of_mi += 1
             return actual_time + serving_time
@@ -107,6 +107,7 @@ class Simulator:
             self.packet_limit = float('inf')
         else:
             return -1
+        print("Simulation in progress...")
 
         while self.clock < self.simulation_time and self.packets_served < self.packet_limit:
             event_type = self.__time_algorithm()
@@ -118,8 +119,6 @@ class Simulator:
             last = self.simulation_percent
             self.simulation_percent = round(self.packets_served/self.packet_limit*100, 0)
             if self.simulation_percent != last:
-                os.system('cls')
-                print("Simulation in progress...")
                 print(f"{self.simulation_percent}%")
         print("Simulation completed.")
         print(self)
